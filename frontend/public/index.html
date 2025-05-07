@@ -44,7 +44,7 @@
 
       // Optional: Sync with backend
       try {
-        const response = await axios.get(`https://your-app.onrender.com/get-wakeup/${deviceId}`);
+        const response = await axios.get(`https://wakeupcall-jpxl.onrender.com/get-wakeup/${deviceId}`);
         if (response.data.wakeups.length > 0) {
           const wakeupTime = response.data.wakeups[0].wakeup_time;
           document.getElementById('wakeup-time').value = wakeupTime;
@@ -69,7 +69,7 @@
       // Optional: Save to backend
       const deviceId = (await Preferences.get({ key: 'device_id' })).value;
       try {
-        await axios.post('https://your-app.onrender.com/set-wakeup', {
+        await axios.post('https://wakeupcall-jpxl.onrender.com/set-wakeup', {
           device_id: deviceId,
           wakeup_time: wakeupTime
         });
