@@ -1,0 +1,19 @@
+{
+  "name": "wakeup-call-frontend",
+  "version": "1.0.0",
+  "description": "Wake-Up Call App Frontend",
+  "main": "index.js",
+  "scripts": {
+    "start": "serve public",
+    "build": "echo 'Build step here' && exit 0"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/android": "^6.0.0",
+    "@supabase/supabase-js": "^2.0.0",
+    "serve": "^14.0.0"
+  },
+  "author": "Kushal",
+  "license": "ISC"
+}
