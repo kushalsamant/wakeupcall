@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wake-Up Call App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/capacitor.js"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-4">Wake-Up Call</h1>
+    <div class="mb-4">
+      <label for="wakeup-time" class="block text-sm font-medium text-gray-700">Wake-Up Time</label>
+      <input type="time" id="wakeup-time" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+    </div>
+    <button id="set-wakeup" class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Set Wake-Up Call</button>
+    <p id="status" class="mt-4 text-center text-gray-600">No wake-up time set.</p>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    const { LocalNotifications } = window.Capacitor.Plugins;
+    const { Preferences } = window.Capacitor.Plugins;
+    const { Device } = window.Capacitor.Plugins;
+
+    async function init() {
+      // Request notification permissions
+      await LocalNotifications.requestPermissions();
+
+      // Get or generate device ID
+      let deviceId = (await Preferences.get({ key: 'device_id' })).value;
+      if (!deviceId) {
+        const info = await Device.getId();
+        deviceId = info.identifier;
+        await Preferences.set({ key: 'device_id', value: deviceId });
+      }
+
+      // Load saved wake-up time (local or from backend)
+      const savedTime = (await Preferences.get({ key: 'wakeup_time' })).value;
+      if (savedTime) {
+        document.getElementById('wakeup-time').value = savedTime;
+        document.getElementById('status').textContent = `Wake-up set for ${savedTime}`;
+      }
+
+      // Optional: Sync with backend
+      try {
+        const response = await axios.get(`https://your-app.onrender.com/get-wakeup/${deviceId}`);
+        if (response.data.wakeups.length > 0) {
+          const wakeupTime = response.data.wakeups[0].wakeup_time;
+          document.getElementById('wakeup-time').value = wakeupTime;
+          document.getElementById('status').textContent = `Wake-up set for ${wakeupTime}`;
+          await Preferences.set({ key: 'wakeup_time', value: wakeupTime });
+        }
+      } catch (error) {
+        console.log('Backend sync skipped or failed:', error);
+      }
+    }
+
+    document.getElementById('set-wakeup').addEventListener('click', async () => {
+      const wakeupTime = document.getElementById('wakeup-time').value;
+      if (!wakeupTime) {
+        document.getElementById('status').textContent = 'Please select a time.';
+        return;
+      }
+
+      // Save locally
+      await Preferences.set({ key: 'wakeup_time', value: wakeupTime });
+
+      // Optional: Save to backend
+      const deviceId = (await Preferences.get({ key: 'device_id' })).value;
+      try {
+        await axios.post('https://your-app.onrender.com/set-wakeup', {
+          device_id: deviceId,
+          wakeup_time: wakeupTime
+        });
+      } catch (error) {
+        console.log('Backend save skipped or failed:', error);
+      }
+
+      // Schedule local notification
+      const [hours, minutes] = wakeupTime.split(':');
+      const now = new Date();
+      let scheduleTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+      if (scheduleTime < now) {
+        scheduleTime.setDate(scheduleTime.getDate() + 1);
+      }
+
+      await LocalNotifications.schedule({
+        notifications: [{
+          id: 1,
+          title: 'Wake Up!',
+          body: 'Time to start your day!',
+          schedule: { at: scheduleTime },
+          actionTypeId: 'FULL_SCREEN_CALL',
+          extra: { wakeupTime }
+        }]
+      });
+
+      document.getElementById('status').textContent = `Wake-up set for ${wakeupTime}`;
+    });
+
+    // Register action type for full-screen intent
+    LocalNotifications.registerActionTypes({
+      types: [{
+        id: 'FULL_SCREEN_CALL',
+        actions: [
+          { id: 'accept', title: 'Accept', foreground: true },
+          { id: 'decline', title: 'Decline', destructive: true }
+        ]
+      }]
+    });
+
+    init();
+  </script>
+</body>
+</html>
