@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wake-Up Call</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .status {
+            color: green;
+            margin-top: 10px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Wake-Up Call</h1>
+        <form action="/set-wakeup" method="POST">
+            <input type="tel" name="phone_number" placeholder="Phone Number (e.g., +1234567890)" required>
+            <input type="time" name="wakeup_time" required>
+            <button type="submit">Set Wake-Up Call</button>
+        </form>
+        <p class="{{ 'status' if status.startswith('Wake-up call set') else 'error' }}">{{ status }}</p>
+    </div>
+</body>
+</html>
