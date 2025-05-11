@@ -1,0 +1,11 @@
+<application>:
+<activity
+    android:name=".CallActivity"
+    android:exported="true"
+    android:showWhenLocked="true"
+    android:turnScreenOn="true">
+    <intent-filter>
+        <action android:name="com.kushal.wakeupcall.FULL_SCREEN_CALL" />
+        <category android:name="android.intent.category.DEFAULT" />
+    </intent-filter>
+</activity>

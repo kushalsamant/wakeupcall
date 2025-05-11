@@ -1,6 +1,6 @@
-{
-    "appId": "com.kushal.wakeupcall",
-    "appName": "WakeUpCall",
-    "webDir": "public",
-    "bundledWebRuntime": false
-  }
+﻿{
+  "appId": "com.kushal.wakeupcall",
+  "appName": "WakeUpCall",
+  "webDir": "public",
+  "bundledWebRuntime": false
+}
