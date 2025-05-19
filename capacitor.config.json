@@ -1,13 +1,5 @@
 {
   "appId": "com.kushal.wakeupcall",
   "appName": "WakeUpCall",
-  "webDir": "web/build",
-  "bundledWebRuntime": false,
-  "plugins": {
-    "LocalNotifications": {
-      "smallIcon": "ic_stat_notification",
-      "iconColor": "#488AFF",
-      "sound": "default"
-    }
-  }
+  "webDir": "www"
 }
