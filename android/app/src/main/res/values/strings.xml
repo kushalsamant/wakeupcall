@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">WakeUpCall</string>
-    <string name="title_activity_main">WakeUpCall</string>
-    <string name="package_name">com.kushal.wakeupcall</string>
-    <string name="custom_url_scheme">com.kushal.wakeupcall</string>
-</resources>
